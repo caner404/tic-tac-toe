@@ -1,17 +1,35 @@
 <script setup>
+import { computed } from "@vue/reactivity";
 import IconLogoCross from "./icons/IconLogoCross.vue";
 import IconLogoCircle from "./icons/IconLogoCircle.vue";
+import BaseLogoButton from "@/components//BaseLogoButton.vue";
+import { store } from "@/store";
+
+const isActivePlayerCircle = computed(() => {
+  return store.playerTeam === "O";
+});
+const isActivePlayerCross = computed(() => {
+  return store.playerTeam === "X";
+});
 </script>
 <template>
   <div class="mark">
     <h3 class="mark-heading">Pick Player 1's Mark</h3>
     <div class="mark-container">
-      <button class="mark-cross">
-        <IconLogoCross />
-      </button>
-      <button class="mark-circle">
-        <IconLogoCircle />
-      </button>
+      <BaseLogoButton
+        mode="cross"
+        :isActivePlayer="isActivePlayerCross"
+        @click="store.changeTeam()"
+      >
+        <IconLogoCross :isActivePlayer="isActivePlayerCross" />
+      </BaseLogoButton>
+      <BaseLogoButton
+        mode="circle"
+        :isActivePlayer="isActivePlayerCircle"
+        @click="store.changeTeam()"
+      >
+        <IconLogoCircle :isActivePlayer="isActivePlayerCircle" />
+      </BaseLogoButton>
     </div>
     <p class="mark-reminder">Remember: x goes first</p>
   </div>
@@ -53,16 +71,5 @@ import IconLogoCircle from "./icons/IconLogoCircle.vue";
   border-radius: 1rem;
   padding: 1rem;
   background-color: var(--c-dark-navy);
-}
-.mark-circle,
-.mark-cross {
-  cursor: pointer;
-  flex: 1;
-  padding: 1.5rem;
-}
-
-.mark-circle {
-  background-color: var(--c-silver);
-  border-radius: 1rem;
 }
 </style>
