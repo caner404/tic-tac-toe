@@ -21,4 +21,10 @@ export const store = reactive({
   getEnemyTeam() {
     return this.enemyTeam;
   },
+  isPlayerTeamCross() {
+    return this.playerTeam === "X";
+  },
+  isPlayerTeamCircle() {
+    return this.playerTeam === "O";
+  },
 });

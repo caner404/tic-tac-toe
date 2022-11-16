@@ -9,14 +9,14 @@ import { store } from "../../store";
 import { computed } from "@vue/reactivity";
 
 const crossTitle = computed(() => {
-  if (store.getPlayerTeam() === "X") {
+  if (store.isPlayerTeamCross()) {
     return store.getEnemyTeam() === "CPU" ? "YOU" : "P1";
   } else {
     return store.getEnemyTeam() === "CPU" ? "CPU" : "P1";
   }
 });
 const circleTitle = computed(() => {
-  if (store.getPlayerTeam() === "O") {
+  if (store.isPlayerTeamCircle()) {
     return store.getEnemyTeam() === "CPU" ? "YOU" : "P2";
   } else {
     return store.getEnemyTeam() === "CPU" ? "CPU" : "P2";
