@@ -7,16 +7,14 @@ import IconCircleOutline from "@/components/icons/IconCircleOutline.vue";
 import { store } from "@/store";
 import { ref, computed } from "vue";
 
+const props = defineProps(["item"]);
 const hover = ref(false);
-const crossCliked = ref(false);
-const circleClicked = ref(false);
+const boxClicked = ref(false);
 
 const activateCorrectMark = computed(() => {
-  if (store.isPlayerTeamCross()) {
-    crossCliked.value = true;
-  } else {
-    circleClicked.value = true;
-  }
+  if (props.item.value !== "") return;
+  boxClicked.value = !boxClicked.value;
+  store.executeGameLogic(props.item);
 });
 </script>
 <template>
@@ -26,16 +24,24 @@ const activateCorrectMark = computed(() => {
     @click="activateCorrectMark"
   >
     <IconCrossOutline
-      :showOnHover="hover && !crossCliked"
-      v-if="store.isPlayerTeamCross() && !crossCliked"
+      :showOnHover="hover && !boxClicked && store.isPlayerTeamCross()"
+      v-if="
+        store.isPlayerTeamCross() &&
+        !boxClicked &&
+        store.isGameValueEmpty(props.item)
+      "
     />
     <IconCircleOutline
-      :showOnHover="hover && !circleClicked"
-      v-else-if="store.isPlayerTeamCircle() && !circleClicked"
+      :showOnHover="hover && !boxClicked && store.isPlayerTeamCircle()"
+      v-else-if="
+        store.isPlayerTeamCircle() &&
+        !boxClicked &&
+        store.isGameValueEmpty(props.item)
+      "
     />
 
-    <IconCross v-if="store.isPlayerTeamCross() && crossCliked" />
-    <IconCircle v-else-if="store.isPlayerTeamCircle() && circleClicked" />
+    <IconCross v-if="store.isGameValueCross(props.item)" />
+    <IconCircle v-else-if="store.isGameValueCircle(props.item)" />
   </button>
 </template>
 <style scoped>

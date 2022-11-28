@@ -22,19 +22,21 @@ const circleTitle = computed(() => {
     return store.getEnemyTeam() === "CPU" ? "CPU" : "P2";
   }
 });
+const gameBoardItems = store.getGameBoardItems();
+const restartGame = function () {
+  store.isGameboardActive = !store.isGameboardActive;
+  store.restart();
+};
 </script>
 <template>
   <div class="gameBoard">
     <IconLogo />
     <CurrentPlayerBox />
-    <BaseLogoButton
-      mode="restart"
-      @click="store.isGameboardActive = !store.isGameboardActive"
-    >
+    <BaseLogoButton mode="restart" @click="restartGame">
       <IconRestart />
     </BaseLogoButton>
 
-    <GameBoardTile v-for="n in 9" />
+    <GameBoardTile v-for="item in gameBoardItems" :item="item" />
 
     <BaseGameStats team="cross" :title="crossTitle" />
     <BaseGameStats team="ties" />
