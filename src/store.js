@@ -5,6 +5,8 @@ export const store = reactive({
   xMinValue: 0,
   xMaxValue: 3,
   yMaxValue: 3,
+  playerWins: false,
+  enemyWins: false,
 
   gameBoardItems: [
     {
@@ -63,6 +65,8 @@ export const store = reactive({
     },
   ],
   isGameboardActive: false,
+  showModal: false,
+  modalMode: "",
   playerTeam: "X",
   enemyTeam: "",
   restart() {
@@ -124,8 +128,6 @@ export const store = reactive({
     let sameMarkStreakVertical = 0;
     let sameMarkDiagonal = 0;
 
-    //nur ausführen wenn kein Wert enthalten ist
-    //TODO
     if (item.value !== "") return;
     this.addMarkOnGameBoard(this.getPlayerMark(), item);
     let currentGameBoardItem = this.gameBoardItems.find(
@@ -138,23 +140,40 @@ export const store = reactive({
       this.compareGameBoardItemVertical(currentGameBoardItem);
     sameMarkDiagonal = this.compareGameBoardItemDiagonal(currentGameBoardItem);
 
+    if (
+      sameMarkStreakHorizontal === 3 ||
+      sameMarkStreakVertical === 3 ||
+      sameMarkDiagonal == 3
+    ) {
+      //player wins!
+      this.playerWins = !this.playerWins;
+      return;
+    }
+
     if (this.isEnemyCPU()) {
       //put random mark on board for cpu
       let randomFreeGameBoardItem = this.gameBoardItems.find(
         (item) => item.value == ""
       );
-      console.log(`${JSON.stringify(randomFreeGameBoardItem)}`);
       if (randomFreeGameBoardItem != null) {
         this.addMarkOnGameBoard(this.getEnemyMark(), randomFreeGameBoardItem);
+        sameMarkStreakHorizontal =
+          this.compareGameBoardItemHorizontal(currentGameBoardItem);
+        sameMarkStreakVertical =
+          this.compareGameBoardItemVertical(currentGameBoardItem);
+        sameMarkDiagonal =
+          this.compareGameBoardItemDiagonal(currentGameBoardItem);
+        if (
+          sameMarkStreakHorizontal === 3 ||
+          sameMarkStreakVertical === 3 ||
+          sameMarkDiagonal == 3
+        ) {
+          //cpu wins!
+          this.enemyWins = !this.enemyWins;
+          return;
+        }
       }
     }
-
-    console.table(this.gameBoardItems);
-    /*
-    console.log(`Horizontal match: ${sameMarkStreakHorizontal}`);
-    console.log(`Vertical match: ${sameMarkStreakVertical}`);
-    console.log(`Diagonal match: ${sameMarkDiagonal}`);
-    */
   },
   addMarkOnGameBoard(markValue, gameItem) {
     this.gameBoardItems.forEach((item) => {

@@ -5,8 +5,10 @@ import CurrentPlayerBox from "@/components/CurrentPlayerBox.vue";
 import GameBoardTile from "@/components/GameBoardTile.vue";
 import BaseLogoButton from "@/components/BaseLogoButton.vue";
 import BaseGameStats from "@/components/BaseGameStats.vue";
-import { store } from "../../store";
+
+import { store } from "@/store";
 import { computed } from "@vue/reactivity";
+import { ref } from "vue";
 
 const crossTitle = computed(() => {
   if (store.isPlayerTeamCross()) {
@@ -22,10 +24,13 @@ const circleTitle = computed(() => {
     return store.getEnemyTeam() === "CPU" ? "CPU" : "P2";
   }
 });
+const showModal = ref(false);
 const gameBoardItems = store.getGameBoardItems();
 const restartGame = function () {
-  store.isGameboardActive = !store.isGameboardActive;
-  store.restart();
+  store.isGameboardActive = true;
+  store.showModal = !store.showModal;
+  store.modalMode = "restart";
+  //store.restart();
 };
 </script>
 <template>
