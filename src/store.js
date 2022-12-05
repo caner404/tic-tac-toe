@@ -71,8 +71,13 @@ export const store = reactive({
   enemyTeam: "",
   restart() {
     this.isGameboardActive = false;
+    this.showModal = false;
     this.playerTeam = "X";
     this.enemyTeam = "";
+    this.gameBoardItems.forEach((item) => (item.value = ""));
+  },
+  nextRound() {
+    this.showModal = false;
     this.gameBoardItems.forEach((item) => (item.value = ""));
   },
   changeTeam() {
@@ -123,6 +128,12 @@ export const store = reactive({
     const mark = this.getPlayerMark();
     return this.isPlayerTeamCircle() ? "X" : "O";
   },
+  getPlayerWins() {
+    return this.playerWins;
+  },
+  getEnemyWins() {
+    return this.enemyWins;
+  },
   executeGameLogic(item) {
     let sameMarkStreakHorizontal = 0;
     let sameMarkStreakVertical = 0;
@@ -147,6 +158,8 @@ export const store = reactive({
     ) {
       //player wins!
       this.playerWins = !this.playerWins;
+      this.modalMode = this.getPlayerMark();
+      this.showModal = !this.showModal;
       return;
     }
 
@@ -163,6 +176,9 @@ export const store = reactive({
           this.compareGameBoardItemVertical(currentGameBoardItem);
         sameMarkDiagonal =
           this.compareGameBoardItemDiagonal(currentGameBoardItem);
+        console.log(
+          `Horizontal: ${sameMarkStreakHorizontal},Vertikal: ${sameMarkStreakVertical},Diagonal: ${sameMarkDiagonal}`
+        );
         if (
           sameMarkStreakHorizontal === 3 ||
           sameMarkStreakVertical === 3 ||
@@ -170,6 +186,8 @@ export const store = reactive({
         ) {
           //cpu wins!
           this.enemyWins = !this.enemyWins;
+          this.modalMode = this.getEnemyMark();
+          this.showModal = !this.showModal;
           return;
         }
       }
@@ -228,9 +246,7 @@ export const store = reactive({
   },
   compareGameBoardItemDiagonal(currentGameBoardItem) {
     let diagonalStreak = 0;
-    let verticalValue = currentGameBoardItem.yValue;
-    let horizontalValue = currentGameBoardItem.xValue;
-    // links oben -> rechts unten ; currentX+1, currentY+1
+
     for (
       let x = 0, y = 0;
       x <= this.xMaxValue && y < this.yMaxValue;

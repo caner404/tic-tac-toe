@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-const props = defineProps(["mode", "text"]);
+const props = defineProps(["mode", "text", "clickEvent"]);
 
 const classObject = computed(() => ({
   secondary: props.mode === "secondary",
@@ -8,7 +8,7 @@ const classObject = computed(() => ({
 }));
 </script>
 <template>
-  <button :class="classObject">{{ text }}</button>
+  <button :class="classObject" @click="clickEvent">{{ text }}</button>
 </template>
 <style>
 .primary,

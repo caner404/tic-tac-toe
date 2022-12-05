@@ -9,11 +9,9 @@ import { ref, computed } from "vue";
 
 const props = defineProps(["item"]);
 const hover = ref(false);
-const boxClicked = ref(false);
 
 const activateCorrectMark = computed(() => {
   if (props.item.value !== "") return;
-  boxClicked.value = !boxClicked.value;
   store.executeGameLogic(props.item);
 });
 </script>
@@ -24,19 +22,13 @@ const activateCorrectMark = computed(() => {
     @click="activateCorrectMark"
   >
     <IconCrossOutline
-      :showOnHover="hover && !boxClicked && store.isPlayerTeamCross()"
-      v-if="
-        store.isPlayerTeamCross() &&
-        !boxClicked &&
-        store.isGameValueEmpty(props.item)
-      "
+      :showOnHover="hover"
+      v-if="store.isPlayerTeamCross() && store.isGameValueEmpty(props.item)"
     />
     <IconCircleOutline
-      :showOnHover="hover && !boxClicked && store.isPlayerTeamCircle()"
+      :showOnHover="hover"
       v-else-if="
-        store.isPlayerTeamCircle() &&
-        !boxClicked &&
-        store.isGameValueEmpty(props.item)
+        store.isPlayerTeamCircle() && store.isGameValueEmpty(props.item)
       "
     />
 

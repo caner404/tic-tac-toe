@@ -8,20 +8,30 @@ import { store } from "@/store";
 
 const header = computed(() => {
   if (store.isEnemyCPU()) {
-    return store.modalMode === "restart" ? "" : "";
+    return store.getPlayerWins() ? "You won!" : "Oh no , you lost...";
   }
+  return "";
 });
 const description = computed(() => {
-  return store.modalMode === "restart" ? "restart game?" : "";
+  return store.modalMode !== "restart" ? "takes the round" : "restart game?";
 });
 
 const buttonTextPrimary = computed(() => {
-  return store.modalMode === "restart" ? "yes,restart" : "next round";
+  return store.modalMode !== "restart" ? "Next round" : "yes,restart";
 });
 
 const buttonTextSecondary = computed(() => {
-  return store.modalMode === "restart" ? "no,cancel" : "quit";
+  return store.modalMode !== "restart" ? "quit" : "no,cancel";
 });
+function restart() {
+  store.restart();
+}
+function nextRound() {
+  store.nextRound();
+}
+function cancel() {
+  store.showModal = !store.showModal;
+}
 </script>
 <template>
   <div class="container">
@@ -30,11 +40,29 @@ const buttonTextSecondary = computed(() => {
         {{ header }}
       </h3>
       <div class="modal__winner">
-        <p class="modal__wintext">{{ description }}</p>
+        <IconCircle v-if="store.modalMode === 'O'" />
+        <IconCross v-else-if="store.modalMode === 'X'" />
+        <p
+          class="modal__wintext"
+          :class="{
+            circleColor: store.modalMode === 'O',
+            crossColor: store.modalMode === 'X',
+          }"
+        >
+          {{ description }}
+        </p>
       </div>
       <div class="modal__buttons">
-        <BaseButton mode="secondary" :text="buttonTextSecondary" />
-        <BaseButton mode="primary" :text="buttonTextPrimary" />
+        <BaseButton
+          mode="secondary"
+          :text="buttonTextSecondary"
+          :clickEvent="store.modalMode !== 'restart' ? restart : cancel"
+        />
+        <BaseButton
+          mode="primary"
+          :text="buttonTextPrimary"
+          :clickEvent="store.modalMode !== 'restart' ? nextRound : restart"
+        />
       </div>
     </div>
     <div class="overlay"></div>
@@ -88,6 +116,12 @@ const buttonTextSecondary = computed(() => {
   font-style: normal;
   font-weight: 700;
 }
+.modal__winner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
 .modal__wintext {
   font-size: 4rem;
   line-height: 5rem;
@@ -100,5 +134,11 @@ const buttonTextSecondary = computed(() => {
   justify-content: center;
   align-items: center;
   gap: 2rem;
+}
+.circleColor {
+  color: var(--c-light-yellow);
+}
+.crossColor {
+  color: var(--c-light-blue);
 }
 </style>
