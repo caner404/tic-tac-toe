@@ -7,6 +7,9 @@ export const store = reactive({
   yMaxValue: 3,
   playerWins: false,
   enemyWins: false,
+  playerScore: 0,
+  enemyScore: 0,
+  tieScore: 0,
 
   gameBoardItems: [
     {
@@ -14,54 +17,63 @@ export const store = reactive({
       boxNumber: 0,
       xValue: 0,
       yValue: 0,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 1,
       xValue: 0,
       yValue: 1,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 2,
       xValue: 0,
       yValue: 2,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 3,
       xValue: 1,
       yValue: 0,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 4,
       xValue: 1,
       yValue: 1,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 5,
       xValue: 1,
       yValue: 2,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 6,
       xValue: 2,
       yValue: 0,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 7,
       xValue: 2,
       yValue: 1,
+      hover: false,
     },
     {
       value: "",
       boxNumber: 8,
       xValue: 2,
       yValue: 2,
+      hover: false,
     },
   ],
   isGameboardActive: false,
@@ -74,11 +86,24 @@ export const store = reactive({
     this.showModal = false;
     this.playerTeam = "X";
     this.enemyTeam = "";
-    this.gameBoardItems.forEach((item) => (item.value = ""));
+    this.playerWins = false;
+    this.enemyWins = false;
+    this.playerScore = 0;
+    this.enemyScore = 0;
+    this.tieScore = 0;
+    this.gameBoardItems.forEach((item) => {
+      item.value = "";
+      item.hover = false;
+    });
   },
   nextRound() {
     this.showModal = false;
-    this.gameBoardItems.forEach((item) => (item.value = ""));
+    this.playerWins = false;
+    this.enemyWins = false;
+    this.gameBoardItems.forEach((item) => {
+      item.value = "";
+      item.hover = false;
+    });
   },
   changeTeam() {
     this.playerTeam === "X" ? (this.playerTeam = "O") : (this.playerTeam = "X");
@@ -134,6 +159,18 @@ export const store = reactive({
   getEnemyWins() {
     return this.enemyWins;
   },
+  isATie() {
+    return this.playerWins === false && this.enemyWins === false;
+  },
+  getPlayerScore() {
+    return this.playerScore;
+  },
+  getEnemyScore() {
+    return this.enemyScore;
+  },
+  getTieScore() {
+    return this.tieScore;
+  },
   executeGameLogic(item) {
     let sameMarkStreakHorizontal = 0;
     let sameMarkStreakVertical = 0;
@@ -154,9 +191,10 @@ export const store = reactive({
     if (
       sameMarkStreakHorizontal === 3 ||
       sameMarkStreakVertical === 3 ||
-      sameMarkDiagonal == 3
+      sameMarkDiagonal === 3
     ) {
       //player wins!
+      this.playerScore = this.playerScore + 1;
       this.playerWins = !this.playerWins;
       this.modalMode = this.getPlayerMark();
       this.showModal = !this.showModal;
@@ -170,21 +208,25 @@ export const store = reactive({
       );
       if (randomFreeGameBoardItem != null) {
         this.addMarkOnGameBoard(this.getEnemyMark(), randomFreeGameBoardItem);
-        sameMarkStreakHorizontal =
-          this.compareGameBoardItemHorizontal(currentGameBoardItem);
-        sameMarkStreakVertical =
-          this.compareGameBoardItemVertical(currentGameBoardItem);
-        sameMarkDiagonal =
-          this.compareGameBoardItemDiagonal(currentGameBoardItem);
+        sameMarkStreakHorizontal = this.compareGameBoardItemHorizontal(
+          randomFreeGameBoardItem
+        );
+        sameMarkStreakVertical = this.compareGameBoardItemVertical(
+          randomFreeGameBoardItem
+        );
+        sameMarkDiagonal = this.compareGameBoardItemDiagonal(
+          randomFreeGameBoardItem
+        );
         console.log(
-          `Horizontal: ${sameMarkStreakHorizontal},Vertikal: ${sameMarkStreakVertical},Diagonal: ${sameMarkDiagonal}`
+          `CPU Horizontal: ${sameMarkStreakHorizontal},Vertikal: ${sameMarkStreakVertical},Diagonal: ${sameMarkDiagonal}`
         );
         if (
           sameMarkStreakHorizontal === 3 ||
           sameMarkStreakVertical === 3 ||
-          sameMarkDiagonal == 3
+          sameMarkDiagonal === 3
         ) {
           //cpu wins!
+          this.enemyScore = this.enemyScore + 1;
           this.enemyWins = !this.enemyWins;
           this.modalMode = this.getEnemyMark();
           this.showModal = !this.showModal;
@@ -192,10 +234,24 @@ export const store = reactive({
         }
       }
     }
+    if (
+      this.gameBoardItems.find((item) => item.value === "") == null &&
+      this.enemyWins === false &&
+      this.playerWins === false
+    ) {
+      //tie
+      this.tieScore = this.tieScore + 1;
+      this.showModal = !this.showModal;
+      this.modalMode = "tie";
+    }
+    console.log(`Score: Player${this.playerScore},Enemy${this.enemyScore}`);
   },
   addMarkOnGameBoard(markValue, gameItem) {
     this.gameBoardItems.forEach((item) => {
-      if (item.boxNumber === gameItem.boxNumber) item.value = markValue;
+      if (item.boxNumber === gameItem.boxNumber) {
+        item.value = markValue;
+        item.hover = !item.hover;
+      }
     });
   },
   compareGameBoardItemHorizontal(currentGameBoardItem) {

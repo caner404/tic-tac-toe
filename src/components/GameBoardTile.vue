@@ -8,7 +8,6 @@ import { store } from "@/store";
 import { ref, computed } from "vue";
 
 const props = defineProps(["item"]);
-const hover = ref(false);
 
 const activateCorrectMark = computed(() => {
   if (props.item.value !== "") return;
@@ -17,16 +16,16 @@ const activateCorrectMark = computed(() => {
 </script>
 <template>
   <button
-    @mouseover="hover = true"
-    @mouseleave="hover = false"
+    @mouseover="props.item.hover = true"
+    @mouseleave="props.item.hover = false"
     @click="activateCorrectMark"
   >
     <IconCrossOutline
-      :showOnHover="hover"
+      :showOnHover="props.item.hover"
       v-if="store.isPlayerTeamCross() && store.isGameValueEmpty(props.item)"
     />
     <IconCircleOutline
-      :showOnHover="hover"
+      :showOnHover="props.item.hover"
       v-else-if="
         store.isPlayerTeamCircle() && store.isGameValueEmpty(props.item)
       "

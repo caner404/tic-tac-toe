@@ -7,12 +7,13 @@ import { computed, ref } from "vue";
 import { store } from "@/store";
 
 const header = computed(() => {
+  if (store.isATie()) return "";
   if (store.isEnemyCPU()) {
     return store.getPlayerWins() ? "You won!" : "Oh no , you lost...";
   }
-  return "";
 });
 const description = computed(() => {
+  if (store.modalMode === "tie") return "Round tied";
   return store.modalMode !== "restart" ? "takes the round" : "restart game?";
 });
 
@@ -36,7 +37,10 @@ function cancel() {
 <template>
   <div class="container">
     <div class="modal">
-      <h3 v-if="store.modalMode !== 'restart'" class="modal__header">
+      <h3
+        v-if="store.modalMode !== 'restart' || store.modalMode !== 'tie'"
+        class="modal__header"
+      >
         {{ header }}
       </h3>
       <div class="modal__winner">

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-const props = defineProps(["team", "title"]);
+const props = defineProps(["team", "title", "score"]);
 const computeTitle = computed(() => {
   return props.title != null ? `(${props.title})` : "";
 });
@@ -8,7 +8,7 @@ const computeTitle = computed(() => {
 <template>
   <div class="stats" :class="team">
     <p class="stats-description">{{ team }} {{ computeTitle }}</p>
-    <p class="stats-value">0</p>
+    <p class="stats-value">{{ score }}</p>
   </div>
 </template>
 <style scoped>

@@ -24,13 +24,24 @@ const circleTitle = computed(() => {
     return store.getEnemyTeam() === "CPU" ? "CPU" : "P2";
   }
 });
-const showModal = ref(false);
+const crossScore = computed(() => {
+  return store.isPlayerTeamCross()
+    ? store.getPlayerScore()
+    : store.getEnemyScore();
+});
+const circleScore = computed(() => {
+  return store.isPlayerTeamCircle()
+    ? store.getPlayerScore()
+    : store.getEnemyScore();
+});
+const tieScore = computed(() => {
+  return store.getTieScore();
+});
 const gameBoardItems = store.getGameBoardItems();
 const restartGame = function () {
   store.isGameboardActive = true;
   store.showModal = !store.showModal;
   store.modalMode = "restart";
-  //store.restart();
 };
 </script>
 <template>
@@ -43,9 +54,9 @@ const restartGame = function () {
 
     <GameBoardTile v-for="item in gameBoardItems" :item="item" />
 
-    <BaseGameStats team="cross" :title="crossTitle" />
-    <BaseGameStats team="ties" />
-    <BaseGameStats team="circle" :title="circleTitle" />
+    <BaseGameStats team="cross" :title="crossTitle" :score="crossScore" />
+    <BaseGameStats team="ties" :score="tieScore" />
+    <BaseGameStats team="circle" :title="circleTitle" :score="circleScore" />
   </div>
 </template>
 <style scoped>
