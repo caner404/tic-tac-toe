@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-import IconLogoCross from "./icons/IconLogoCross.vue";
-import IconLogoCircle from "./icons/IconLogoCircle.vue";
+import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
+import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import BaseLogoButton from "@/components//BaseLogoButton.vue";
 import { store } from "@/store";
 
@@ -21,14 +21,14 @@ const isActivePlayerCross = computed(() => {
         :isActivePlayer="isActivePlayerCross"
         @click="store.changeTeam()"
       >
-        <IconLogoCross :isActivePlayer="isActivePlayerCross" />
+        <IconCrossSmall :isActivePlayer="isActivePlayerCross" />
       </BaseLogoButton>
       <BaseLogoButton
         mode="circle"
         :isActivePlayer="isActivePlayerCircle"
         @click="store.changeTeam()"
       >
-        <IconLogoCircle :isActivePlayer="isActivePlayerCircle" />
+        <IconCircleSmall :isActivePlayer="isActivePlayerCircle" />
       </BaseLogoButton>
     </div>
     <p class="mark-reminder">Remember: x goes first</p>

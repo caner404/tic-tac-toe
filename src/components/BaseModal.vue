@@ -1,8 +1,10 @@
 <script setup>
 import IconCircle from "@/components/icons/IconCircle.vue";
 import IconCross from "@/components/icons/IconCross.vue";
+import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
+import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { store } from "@/store";
 
 const header = computed(() => {
@@ -43,8 +45,18 @@ function cancel() {
         {{ header }}
       </h3>
       <div class="modal__winner">
-        <IconCircle v-if="store.modalMode === 'O'" />
-        <IconCross v-else-if="store.modalMode === 'X'" />
+        <IconCircle v-if="store.modalMode === 'O'" class="iconActive" />
+        <IconCross v-else-if="store.modalMode === 'X'" class="iconActive" />
+        <IconCircleSmall
+          v-if="store.modalMode === 'O'"
+          class="iconActiveMobile"
+          mode="modal"
+        />
+        <IconCrossSmall
+          v-else-if="store.modalMode === 'X'"
+          class="iconActiveMobile"
+          mode="modal"
+        />
         <p
           class="modal__wintext"
           :class="{
@@ -71,7 +83,7 @@ function cancel() {
     <div class="overlay"></div>
   </div>
 </template>
-<style>
+<style scoped>
 .container {
   position: absolute;
   top: 0px;
@@ -144,9 +156,35 @@ function cancel() {
 .crossColor {
   color: var(--c-light-blue);
 }
+.iconActive {
+  display: visible;
+}
+.iconActiveMobile {
+  display: none;
+}
 @media (max-width: 60em) {
   .modal {
     transform: translateY(0%);
+  }
+}
+@media (max-width: 30em) {
+  .modal {
+    padding: 5rem 2.5rem;
+  }
+  .modal__winner {
+    gap: 1rem;
+  }
+  .modal__wintext {
+    font-size: 2.4rem;
+    line-height: 3rem;
+    letter-spacing: 1.5px;
+    gap: 1rem;
+  }
+  .iconActive {
+    display: none;
+  }
+  .iconActiveMobile {
+    display: block;
   }
 }
 </style>

@@ -1,9 +1,9 @@
 <script setup>
-import IconLogoCross from "@/components/icons/IconLogoCross.vue";
+import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 </script>
 <template>
   <div class="currentPlayerBox">
-    <IconLogoCross />
+    <IconCrossSmall />
     <p>turn</p>
   </div>
 </template>
