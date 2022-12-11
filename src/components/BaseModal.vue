@@ -2,7 +2,6 @@
 import IconCircle from "@/components/icons/IconCircle.vue";
 import IconCross from "@/components/icons/IconCross.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import BaseLogoButton from "@/components/BaseLogoButton.vue";
 import { computed, ref } from "vue";
 import { store } from "@/store";
 
@@ -144,5 +143,10 @@ function cancel() {
 }
 .crossColor {
   color: var(--c-light-blue);
+}
+@media (max-width: 60em) {
+  .modal {
+    transform: translateY(0%);
+  }
 }
 </style>
