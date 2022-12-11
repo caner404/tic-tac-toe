@@ -8,7 +8,6 @@ import BaseGameStats from "@/components/BaseGameStats.vue";
 
 import { store } from "@/store";
 import { computed } from "@vue/reactivity";
-import { ref } from "vue";
 
 const crossTitle = computed(() => {
   if (store.isPlayerTeamCross()) {
@@ -64,5 +63,16 @@ const restartGame = function () {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 46rem;
+}
+@media (max-width: 60em) {
+  .gameBoard {
+    gap: 1.5rem;
+  }
+  .gameBoard > :nth-child(-n + 3) {
+    margin-bottom: 5rem;
+  }
 }
 </style>

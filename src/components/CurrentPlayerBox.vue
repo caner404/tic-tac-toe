@@ -25,4 +25,15 @@ p {
   color: var(--c-silver);
   font-weight: 700;
 }
+@media (max-width: 30em) {
+  .currentPlayerBox {
+    padding: 1rem;
+    gap: 0rem;
+  }
+  p {
+    font-size: 1.4rem;
+    line-height: 1.8rem;
+    letter-spacing: 0.9px;
+  }
+}
 </style>

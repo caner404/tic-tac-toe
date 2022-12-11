@@ -4,10 +4,14 @@ const props = defineProps(["team", "title", "score"]);
 const computeTitle = computed(() => {
   return props.title != null ? `(${props.title})` : "";
 });
+const teamTitle = computed(() => {
+  if (props.team === "ties") return props.team;
+  return props.team === "cross" ? "X" : "O";
+});
 </script>
 <template>
   <div class="stats" :class="team">
-    <p class="stats-description">{{ team }} {{ computeTitle }}</p>
+    <p class="stats-description">{{ teamTitle }} {{ computeTitle }}</p>
     <p class="stats-value">{{ score }}</p>
   </div>
 </template>

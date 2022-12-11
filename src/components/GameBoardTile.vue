@@ -46,4 +46,11 @@ button {
   color: #fff;
   cursor: pointer;
 }
+
+@media (max-width: 30em) {
+  button {
+    width: 9.6rem;
+    height: 9.6rem;
+  }
+}
 </style>

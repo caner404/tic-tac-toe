@@ -22,7 +22,9 @@ import { store } from "@/store";
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  gap: 3rem;
-  width: 46rem;
+  gap: 2rem;
+  width: 100%;
+  max-width: 46rem;
+  padding: 2rem;
 }
 </style>
