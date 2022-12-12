@@ -81,11 +81,14 @@ export const store = reactive({
   modalMode: "",
   playerTeam: "X",
   enemyTeam: "",
+  currentTeam: "",
+  enemyType: "",
   restart() {
     this.isGameboardActive = false;
     this.showModal = false;
     this.playerTeam = "X";
     this.enemyTeam = "";
+    this.currentTeam = this.playerTeam;
     this.playerWins = false;
     this.enemyWins = false;
     this.playerScore = 0;
@@ -100,6 +103,7 @@ export const store = reactive({
     this.showModal = false;
     this.playerWins = false;
     this.enemyWins = false;
+    this.currentTeam = this.playerTeam;
     this.gameBoardItems.forEach((item) => {
       item.value = "";
       item.hover = false;
@@ -108,19 +112,24 @@ export const store = reactive({
   changeTeam() {
     this.playerTeam === "X" ? (this.playerTeam = "O") : (this.playerTeam = "X");
   },
-  initGameWithCPU() {
+  startGame(enemyType) {
     this.isGameboardActive = !this.isGameboardActive;
-    this.enemyTeam = "CPU";
+    this.currentTeam = this.playerTeam;
+    this.enemyTeam = this.isPlayerTeamCircle() ? "X" : "O";
+    this.enemyType = enemyType.toUpperCase();
   },
-  initGameWithPlayer() {
-    this.isGameboardActive = !this.isGameboardActive;
-    this.enemyTeam = "player";
-  },
+
   getPlayerTeam() {
     return this.playerTeam;
   },
   getEnemyTeam() {
     return this.enemyTeam;
+  },
+  getEnemyType() {
+    return this.enemyType;
+  },
+  getCurrentTeam() {
+    return this.currentTeam;
   },
   isPlayerTeamCross() {
     return this.playerTeam === "X";
@@ -129,10 +138,10 @@ export const store = reactive({
     return this.playerTeam === "O";
   },
   isEnemyCPU() {
-    return this.enemyTeam === "CPU";
+    return this.enemyType === "CPU";
   },
   isEnemyOtherPlayer() {
-    return this.enemyTeam === "player";
+    return this.enemyType === "PLAYER";
   },
   isGameValueEmpty(gameItem) {
     return gameItem.value === "";
@@ -175,6 +184,7 @@ export const store = reactive({
     let sameMarkStreakHorizontal = 0;
     let sameMarkStreakVertical = 0;
     let sameMarkDiagonal = 0;
+    this.currentTeam = this.enemyTeam;
 
     if (item.value !== "") return;
     this.addMarkOnGameBoard(this.getPlayerMark(), item);
@@ -201,39 +211,41 @@ export const store = reactive({
       return;
     }
 
-    if (this.isEnemyCPU()) {
-      //put random mark on board for cpu
-      let randomFreeGameBoardItem = this.gameBoardItems.find(
-        (item) => item.value == ""
-      );
-      if (randomFreeGameBoardItem != null) {
-        this.addMarkOnGameBoard(this.getEnemyMark(), randomFreeGameBoardItem);
-        sameMarkStreakHorizontal = this.compareGameBoardItemHorizontal(
-          randomFreeGameBoardItem
+    const enemyTeamTimeout = setTimeout(() => {
+      if (this.isEnemyCPU()) {
+        //put random mark on board for cpu
+        let randomFreeGameBoardItem = this.gameBoardItems.find(
+          (item) => item.value == ""
         );
-        sameMarkStreakVertical = this.compareGameBoardItemVertical(
-          randomFreeGameBoardItem
-        );
-        sameMarkDiagonal = this.compareGameBoardItemDiagonal(
-          randomFreeGameBoardItem
-        );
-        console.log(
-          `CPU Horizontal: ${sameMarkStreakHorizontal},Vertikal: ${sameMarkStreakVertical},Diagonal: ${sameMarkDiagonal}`
-        );
-        if (
-          sameMarkStreakHorizontal === 3 ||
-          sameMarkStreakVertical === 3 ||
-          sameMarkDiagonal === 3
-        ) {
-          //cpu wins!
-          this.enemyScore = this.enemyScore + 1;
-          this.enemyWins = !this.enemyWins;
-          this.modalMode = this.getEnemyMark();
-          this.showModal = !this.showModal;
-          return;
+        if (randomFreeGameBoardItem != null) {
+          this.addMarkOnGameBoard(this.getEnemyMark(), randomFreeGameBoardItem);
+          sameMarkStreakHorizontal = this.compareGameBoardItemHorizontal(
+            randomFreeGameBoardItem
+          );
+          sameMarkStreakVertical = this.compareGameBoardItemVertical(
+            randomFreeGameBoardItem
+          );
+          sameMarkDiagonal = this.compareGameBoardItemDiagonal(
+            randomFreeGameBoardItem
+          );
+
+          if (
+            sameMarkStreakHorizontal === 3 ||
+            sameMarkStreakVertical === 3 ||
+            sameMarkDiagonal === 3
+          ) {
+            //cpu wins!
+            this.enemyScore = this.enemyScore + 1;
+            this.enemyWins = !this.enemyWins;
+            this.modalMode = this.getEnemyMark();
+            this.showModal = !this.showModal;
+            return;
+          }
         }
       }
-    }
+      this.currentTeam = this.playerTeam;
+    }, 3000);
+
     if (
       this.gameBoardItems.find((item) => item.value === "") == null &&
       this.enemyWins === false &&
@@ -244,7 +256,6 @@ export const store = reactive({
       this.showModal = !this.showModal;
       this.modalMode = "tie";
     }
-    console.log(`Score: Player${this.playerScore},Enemy${this.enemyScore}`);
   },
   addMarkOnGameBoard(markValue, gameItem) {
     this.gameBoardItems.forEach((item) => {
@@ -262,21 +273,17 @@ export const store = reactive({
       currentYValue < this.yMaxValue;
       currentYValue++
     ) {
-      //console.log(`Xvalue: ${horizontalValue}: YValue:${currentYValue}`);
       let compareGameBoardItem = this.gameBoardItems.find(
         (gameItem) =>
           gameItem.xValue === horizontalValue &&
           gameItem.yValue === currentYValue
       );
       if (compareGameBoardItem == null) {
-        //console.log("NULL");
         continue;
       }
       if (compareGameBoardItem.value === currentGameBoardItem.value) {
-        //console.log(`Found horizontal Value: ${compareGameBoardItem.value}`);
         horizontalStreak++;
       }
-      //console.table(this.gameBoardItems);
     }
 
     return horizontalStreak;
@@ -293,7 +300,7 @@ export const store = reactive({
         (gameItem) =>
           gameItem.xValue === currentXValue && gameItem.yValue === verticalValue
       );
-      //console.log(`Xvalue: ${currentXValue}: YValue:${verticalValue}`);
+
       if (compareGameBoardItem == null) continue;
       if (compareGameBoardItem.value === currentGameBoardItem.value)
         verticalStreak++;

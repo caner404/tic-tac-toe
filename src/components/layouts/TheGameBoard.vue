@@ -11,16 +11,16 @@ import { computed } from "@vue/reactivity";
 
 const crossTitle = computed(() => {
   if (store.isPlayerTeamCross()) {
-    return store.getEnemyTeam() === "CPU" ? "YOU" : "P1";
+    return store.getEnemyType() === "CPU" ? "YOU" : "P1";
   } else {
-    return store.getEnemyTeam() === "CPU" ? "CPU" : "P1";
+    return store.getEnemyType() === "CPU" ? "CPU" : "P1";
   }
 });
 const circleTitle = computed(() => {
   if (store.isPlayerTeamCircle()) {
-    return store.getEnemyTeam() === "CPU" ? "YOU" : "P2";
+    return store.getEnemyType() === "CPU" ? "YOU" : "P2";
   } else {
-    return store.getEnemyTeam() === "CPU" ? "CPU" : "P2";
+    return store.getEnemyType() === "CPU" ? "CPU" : "P2";
   }
 });
 const crossScore = computed(() => {

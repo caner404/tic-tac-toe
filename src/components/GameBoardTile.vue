@@ -13,12 +13,16 @@ const activateCorrectMark = computed(() => {
   if (props.item.value !== "") return;
   store.executeGameLogic(props.item);
 });
+const disabledBtnWhileEnemyTeam = computed(() => {
+  return store.getCurrentTeam() !== store.getPlayerTeam();
+});
 </script>
 <template>
   <button
     @mouseover="props.item.hover = true"
     @mouseleave="props.item.hover = false"
     @click="activateCorrectMark"
+    :disabled="disabledBtnWhileEnemyTeam"
   >
     <IconCrossOutline
       :showOnHover="props.item.hover"

@@ -8,11 +8,11 @@ import { store } from "@/store";
   <div class="gameMenu">
     <IconLogo />
     <MarkdDialog />
-    <StartGameButton mode="cpu" enemy="cpu" @click="store.initGameWithCPU()" />
+    <StartGameButton mode="cpu" enemy="cpu" @click="store.startGame('cpu')" />
     <StartGameButton
       mode="player"
       enemy="player"
-      @click="store.initGameWithPlayer()"
+      @click="store.startGame('player')"
     />
   </div>
 </template>

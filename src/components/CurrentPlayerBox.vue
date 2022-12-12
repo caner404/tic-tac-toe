@@ -1,9 +1,19 @@
 <script setup>
 import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
+import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
+import { computed } from "vue";
+import { store } from "@/store";
+const currentTeamCross = computed(() => {
+  return store.getCurrentTeam() === "X";
+});
+const currentTeamCircle = computed(() => {
+  return store.getCurrentTeam() === "O";
+});
 </script>
 <template>
   <div class="currentPlayerBox">
-    <IconCrossSmall />
+    <IconCrossSmall v-if="currentTeamCross" />
+    <IconCircleSmall v-else-if="currentTeamCircle" />
     <p>turn</p>
   </div>
 </template>
