@@ -5,6 +5,7 @@ import CurrentPlayerBox from "@/components/CurrentPlayerBox.vue";
 import GameBoardTile from "@/components/GameBoardTile.vue";
 import BaseLogoButton from "@/components/BaseLogoButton.vue";
 import BaseGameStats from "@/components/BaseGameStats.vue";
+import FadeTransition from "@/components/FadeTransition.vue";
 
 import { store } from "@/store";
 import { computed } from "@vue/reactivity";
@@ -44,32 +45,39 @@ const restartGame = function () {
 };
 </script>
 <template>
-  <div class="gameBoard">
-    <IconLogo />
-    <CurrentPlayerBox />
-    <BaseLogoButton mode="restart" @click="restartGame">
-      <IconRestart />
-    </BaseLogoButton>
+  <FadeTransition>
+    <div class="gameBoard">
+      <IconLogo />
+      <CurrentPlayerBox />
+      <BaseLogoButton mode="restart" @click="restartGame">
+        <IconRestart />
+      </BaseLogoButton>
 
-    <GameBoardTile v-for="item in gameBoardItems" :item="item" />
+      <GameBoardTile v-for="item in gameBoardItems" :item="item" />
 
-    <BaseGameStats team="cross" :title="crossTitle" :score="crossScore" />
-    <BaseGameStats team="ties" :score="tieScore" />
-    <BaseGameStats team="circle" :title="circleTitle" :score="circleScore" />
-  </div>
+      <BaseGameStats team="cross" :title="crossTitle" :score="crossScore" />
+      <BaseGameStats team="ties" :score="tieScore" />
+      <BaseGameStats team="circle" :title="circleTitle" :score="circleScore" />
+    </div>
+  </FadeTransition>
 </template>
 <style scoped>
 .gameBoard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
-  padding: 2rem;
   width: 100%;
-  max-width: 46rem;
+  max-width: 48rem;
 }
+
 @media (max-width: 60em) {
   .gameBoard {
     gap: 1.5rem;
+  }
+}
+@media (max-width: 30em) {
+  .gameBoard {
+    padding: 2rem;
   }
   .gameBoard > :nth-child(-n + 3) {
     margin-bottom: 5rem;

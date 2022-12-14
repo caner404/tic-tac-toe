@@ -20,9 +20,12 @@ const props = defineProps(["showOnHover"]);
 <style scoped>
 .iconCrossOutline {
   visibility: hidden;
+  opacity: 0;
+  transition: all 0.2s ease-in;
 }
 
-.isVisible {
+.iconCrossOutline.isVisible {
   visibility: visible;
+  opacity: 1;
 }
 </style>

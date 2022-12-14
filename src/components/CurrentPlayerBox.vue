@@ -1,6 +1,7 @@
 <script setup>
 import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
+
 import { computed } from "vue";
 import { store } from "@/store";
 const currentTeamCross = computed(() => {

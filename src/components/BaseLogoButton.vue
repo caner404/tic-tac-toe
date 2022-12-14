@@ -15,6 +15,9 @@ const classObject = computed(() => ({
   </button>
 </template>
 <style scoped>
+button {
+  transition: background-color 0.4s cubic-bezier(0.16, 1.12, 1, 1);
+}
 .circle,
 .cross {
   cursor: pointer;
@@ -26,7 +29,6 @@ const classObject = computed(() => ({
 .circle:hover:not(.active) {
   background-color: rgba(168, 191, 201, 0.05);
 }
-
 .active {
   background-color: var(--c-silver);
 }

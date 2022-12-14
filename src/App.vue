@@ -7,8 +7,8 @@ import { store } from "./store";
 
 <template>
   <main>
-    <TheGameMenu v-show="!store.isGameboardActive" />
-    <TheGameBoard v-show="store.isGameboardActive" />
+    <TheGameMenu v-if="!store.isGameboardActive" />
+    <TheGameBoard v-else-if="store.isGameboardActive" />
     <BaseModal v-if="store.showModal" />
   </main>
 </template>

@@ -244,7 +244,7 @@ export const store = reactive({
         }
       }
       this.currentTeam = this.playerTeam;
-    }, 3000);
+    }, 1500);
 
     if (
       this.gameBoardItems.find((item) => item.value === "") == null &&

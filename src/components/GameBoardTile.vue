@@ -3,6 +3,7 @@ import IconCross from "@/components/icons/IconCross.vue";
 import IconCrossOutline from "@/components/icons/IconCrossOutline.vue";
 import IconCircle from "@/components/icons/IconCircle.vue";
 import IconCircleOutline from "@/components/icons/IconCircleOutline.vue";
+import FadeTransition from "@/components/FadeTransition.vue";
 
 import { store } from "@/store";
 import { ref, computed } from "vue";
@@ -35,8 +36,10 @@ const disabledBtnWhileEnemyTeam = computed(() => {
       "
     />
 
-    <IconCross v-if="store.isGameValueCross(props.item)" />
-    <IconCircle v-else-if="store.isGameValueCircle(props.item)" />
+    <FadeTransition>
+      <IconCross v-if="store.isGameValueCross(props.item)" />
+      <IconCircle v-else-if="store.isGameValueCircle(props.item)" />
+    </FadeTransition>
   </button>
 </template>
 <style scoped>
