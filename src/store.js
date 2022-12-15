@@ -184,10 +184,16 @@ export const store = reactive({
     let sameMarkStreakHorizontal = 0;
     let sameMarkStreakVertical = 0;
     let sameMarkDiagonal = 0;
-    this.currentTeam = this.enemyTeam;
+    let mark = "";
+
+    console.log(`Current Team: Begin ${this.currentTeam}`);
 
     if (item.value !== "") return;
-    this.addMarkOnGameBoard(this.getPlayerMark(), item);
+    mark =
+      this.currentTeam === this.getEnemyTeam()
+        ? this.getEnemyMark()
+        : this.getPlayerMark();
+    this.addMarkOnGameBoard(mark, item);
     let currentGameBoardItem = this.gameBoardItems.find(
       (gameBoardItem) => gameBoardItem.boxNumber === item.boxNumber
     );
@@ -201,7 +207,7 @@ export const store = reactive({
     if (
       sameMarkStreakHorizontal === 3 ||
       sameMarkStreakVertical === 3 ||
-      sameMarkDiagonal === 3
+      (sameMarkDiagonal === 3 && this.currentTeam === this.getPlayerTeam())
     ) {
       //player wins!
       this.playerScore = this.playerScore + 1;
@@ -209,7 +215,20 @@ export const store = reactive({
       this.modalMode = this.getPlayerMark();
       this.showModal = !this.showModal;
       return;
+    } else if (
+      sameMarkStreakHorizontal === 3 ||
+      sameMarkStreakVertical === 3 ||
+      (sameMarkDiagonal === 3 && this.currentTeam === this.getEnemyTeam())
+    ) {
+      //enemy player wins!
+      this.enemyScore = this.enemyScore + 1;
+      this.enemyWins = !this.enemyWins;
+      this.modalMode = this.getEnemyMark();
+      this.showModal = !this.showModal;
+      return;
     }
+    this.currentTeam =
+      this.currentTeam === this.playerTeam ? this.enemyTeam : this.playerTeam;
 
     const enemyTeamTimeout = setTimeout(() => {
       if (this.isEnemyCPU()) {
@@ -242,8 +261,8 @@ export const store = reactive({
             return;
           }
         }
+        this.currentTeam = this.playerTeam;
       }
-      this.currentTeam = this.playerTeam;
     }, 1500);
 
     if (
@@ -256,6 +275,7 @@ export const store = reactive({
       this.showModal = !this.showModal;
       this.modalMode = "tie";
     }
+    console.log(`Current Team: Ending ${this.currentTeam}`);
   },
   addMarkOnGameBoard(markValue, gameItem) {
     this.gameBoardItems.forEach((item) => {

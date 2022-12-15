@@ -15,7 +15,23 @@ const activateCorrectMark = computed(() => {
   store.executeGameLogic(props.item);
 });
 const disabledBtnWhileEnemyTeam = computed(() => {
-  return store.getCurrentTeam() !== store.getPlayerTeam();
+  let disabled = false;
+  if (store.isEnemyCPU()) {
+    disabled = store.getCurrentTeam() !== store.getPlayerTeam();
+  }
+  return disabled;
+});
+const renderCrossOutlineHover = computed(() => {
+  if (store.isEnemyCPU()) {
+    return store.isPlayerTeamCross() && store.isGameValueEmpty(props.item);
+  }
+  return store.getCurrentTeam() === "X" && store.isGameValueEmpty(props.item);
+});
+const renderCircleOutlineHover = computed(() => {
+  if (store.isEnemyCPU()) {
+    return store.isPlayerTeamCross() && store.isGameValueEmpty(props.item);
+  }
+  return store.getCurrentTeam() === "O" && store.isGameValueEmpty(props.item);
 });
 </script>
 <template>
@@ -27,13 +43,11 @@ const disabledBtnWhileEnemyTeam = computed(() => {
   >
     <IconCrossOutline
       :showOnHover="props.item.hover"
-      v-if="store.isPlayerTeamCross() && store.isGameValueEmpty(props.item)"
+      v-if="renderCrossOutlineHover"
     />
     <IconCircleOutline
       :showOnHover="props.item.hover"
-      v-else-if="
-        store.isPlayerTeamCircle() && store.isGameValueEmpty(props.item)
-      "
+      v-else-if="renderCircleOutlineHover"
     />
 
     <FadeTransition>
