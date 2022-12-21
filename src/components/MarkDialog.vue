@@ -13,7 +13,7 @@ const isActivePlayerCross = computed(() => {
 });
 </script>
 <template>
-  <div class="mark">
+  <div class="mark" data-test="mark">
     <h3 class="mark-heading">Pick Player 1's Mark</h3>
     <div class="mark-container">
       <BaseLogoButton

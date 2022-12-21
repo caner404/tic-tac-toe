@@ -1,14 +1,22 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-const props = defineProps(["mode", "text", "clickEvent"]);
-
+const props = defineProps({
+  mode: String,
+  text: String,
+  emitEventType: {
+    type: String,
+    validator(value) {
+      return ["cancel", "quit", "nextRound", "restart"].includes(value);
+    },
+  },
+});
 const classObject = computed(() => ({
   secondary: props.mode === "secondary",
   primary: props.mode === "primary",
 }));
 </script>
 <template>
-  <button :class="classObject" @click="clickEvent">{{ text }}</button>
+  <button :class="classObject" @click="$emit(emitEventType)">{{ text }}</button>
 </template>
 <style>
 .primary,

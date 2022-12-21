@@ -7,7 +7,7 @@ import { store } from "@/store";
 </script>
 <template>
   <FadeTransition>
-    <div class="gameMenu">
+    <div class="gameMenu" data-test="gameMenu">
       <IconLogo />
       <MarkdDialog />
       <StartGameButton mode="cpu" enemy="cpu" @click="store.startGame('cpu')" />

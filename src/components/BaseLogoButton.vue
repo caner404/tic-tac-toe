@@ -1,6 +1,9 @@
 <script setup>
 import { computed } from "@vue/reactivity";
-const props = defineProps(["mode", "isActivePlayer"]);
+const props = defineProps({
+  mode: String,
+  isActivePlayer: Boolean,
+});
 
 const classObject = computed(() => ({
   circle: props.mode === "circle",

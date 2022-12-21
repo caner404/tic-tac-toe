@@ -23,7 +23,7 @@ button {
   border-radius: 1.5rem;
   padding: 2.1rem 1rem;
   cursor: pointer;
-  transition: background 0.2s ease-in;
+  transition: background-color 0.2s ease-in;
 }
 .player {
   background-color: var(--c-light-blue);

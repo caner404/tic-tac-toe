@@ -3,7 +3,7 @@ import IconCircle from "@/components/icons/IconCircle.vue";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
 import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseModalButton.vue";
 import FadeTransition from "@/components/FadeTransition.vue";
 import { computed } from "vue";
 import { store } from "@/store";
@@ -73,12 +73,18 @@ function cancel() {
           <BaseButton
             mode="secondary"
             :text="buttonTextSecondary"
-            :clickEvent="store.modalMode !== 'restart' ? restart : cancel"
+            :emitEventType="store.modalMode === 'restart' ? 'cancel' : 'quit'"
+            @cancel="cancel"
+            @quit="restart"
           />
           <BaseButton
             mode="primary"
             :text="buttonTextPrimary"
-            :clickEvent="store.modalMode !== 'restart' ? nextRound : restart"
+            :emitEventType="
+              store.modalMode !== 'restart' ? 'nextRound' : 'restart'
+            "
+            @next-round="nextRound"
+            @restart="restart"
           />
         </div>
       </div>
