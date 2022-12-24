@@ -3,12 +3,14 @@ import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
 
 import { computed } from "vue";
-import { store } from "@/store";
+import { useGameStatsStore } from "@/stores/gameStats";
+
+const gameStats = useGameStatsStore();
 const currentTeamCross = computed(() => {
-  return store.getCurrentTeam() === "X";
+  return gameStats.isCurrentTeamCross();
 });
 const currentTeamCircle = computed(() => {
-  return store.getCurrentTeam() === "O";
+  return gameStats.isCurrentTeamCircle();
 });
 </script>
 <template>

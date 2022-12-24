@@ -1,16 +1,27 @@
 import { reactive } from "vue";
 
 export const store = reactive({
-  yMinValue: 0,
-  xMinValue: 0,
-  xMaxValue: 3,
-  yMaxValue: 3,
+  //gameStatsStore
   playerWins: false,
   enemyWins: false,
   playerScore: 0,
   enemyScore: 0,
   tieScore: 0,
+  playerTeam: "X",
+  enemyTeam: "",
+  currentTeam: "",
+  enemyType: "",
 
+  //mainStore
+  showModal: false,
+  modalMode: "",
+
+  //gameBoardStore
+  yMinValue: 0,
+  xMinValue: 0,
+  xMaxValue: 3,
+  yMaxValue: 3,
+  isGameboardActive: false,
   gameBoardItems: [
     {
       value: "",
@@ -76,13 +87,7 @@ export const store = reactive({
       hover: false,
     },
   ],
-  isGameboardActive: false,
-  showModal: false,
-  modalMode: "",
-  playerTeam: "X",
-  enemyTeam: "",
-  currentTeam: "",
-  enemyType: "",
+
   restart() {
     this.isGameboardActive = false;
     this.showModal = false;
@@ -109,9 +114,7 @@ export const store = reactive({
       item.hover = false;
     });
   },
-  changeTeam() {
-    this.playerTeam === "X" ? (this.playerTeam = "O") : (this.playerTeam = "X");
-  },
+
   startGame(enemyType) {
     this.isGameboardActive = !this.isGameboardActive;
     this.currentTeam = this.playerTeam;
@@ -119,6 +122,9 @@ export const store = reactive({
     this.enemyType = enemyType.toUpperCase();
   },
 
+  changeTeam() {
+    this.playerTeam === "X" ? (this.playerTeam = "O") : (this.playerTeam = "X");
+  },
   getPlayerTeam() {
     return this.playerTeam;
   },
@@ -143,23 +149,10 @@ export const store = reactive({
   isEnemyOtherPlayer() {
     return this.enemyType === "PLAYER";
   },
-  isGameValueEmpty(gameItem) {
-    return gameItem.value === "";
-  },
-  isGameValueCross(gameItem) {
-    return gameItem.value === "X";
-  },
-  isGameValueCircle(gameItem) {
-    return gameItem.value === "O";
-  },
-  getGameBoardItems() {
-    return this.gameBoardItems;
-  },
   getPlayerMark() {
     return this.isPlayerTeamCircle() ? "O" : "X";
   },
   getEnemyMark() {
-    const mark = this.getPlayerMark();
     return this.isPlayerTeamCircle() ? "X" : "O";
   },
   getPlayerWins() {
@@ -180,13 +173,24 @@ export const store = reactive({
   getTieScore() {
     return this.tieScore;
   },
+  isGameValueEmpty(gameItem) {
+    return gameItem.value === "";
+  },
+  isGameValueCross(gameItem) {
+    return gameItem.value === "X";
+  },
+  isGameValueCircle(gameItem) {
+    return gameItem.value === "O";
+  },
+  getGameBoardItems() {
+    return this.gameBoardItems;
+  },
+
   executeGameLogic(item) {
     let sameMarkStreakHorizontal = 0;
     let sameMarkStreakVertical = 0;
     let sameMarkDiagonal = 0;
     let mark = "";
-
-    console.log(`Current Team: Begin ${this.currentTeam}`);
 
     if (item.value !== "") return;
     mark =
@@ -275,7 +279,6 @@ export const store = reactive({
       this.showModal = !this.showModal;
       this.modalMode = "tie";
     }
-    console.log(`Current Team: Ending ${this.currentTeam}`);
   },
   addMarkOnGameBoard(markValue, gameItem) {
     this.gameBoardItems.forEach((item) => {
@@ -358,7 +361,6 @@ export const store = reactive({
           diagonalStreak++;
       }
     }
-
     return diagonalStreak;
   },
 });

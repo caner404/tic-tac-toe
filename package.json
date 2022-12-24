@@ -8,9 +8,11 @@
     "test:unit": "vitest --environment jsdom --root src/"
   },
   "dependencies": {
+    "pinia": "^2.0.28",
     "vue": "^3.2.41"
   },
   "devDependencies": {
+    "@pinia/testing": "^0.0.14",
     "@vitejs/plugin-vue": "^3.1.2",
     "@vue/test-utils": "^2.1.0",
     "jsdom": "^20.0.1",

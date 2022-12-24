@@ -3,13 +3,15 @@ import { computed } from "@vue/reactivity";
 import IconCircleSmall from "@/components/icons/IconCircleSmall.vue";
 import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import BaseLogoButton from "@/components//BaseLogoButton.vue";
-import { store } from "@/store";
+import { useGameStatsStore } from "@/stores/gameStats";
+
+const gameStats = useGameStatsStore();
 
 const isActivePlayerCircle = computed(() => {
-  return store.playerTeam === "O";
+  return gameStats.isPlayerTeamCircle();
 });
 const isActivePlayerCross = computed(() => {
-  return store.playerTeam === "X";
+  return gameStats.isPlayerTeamCross();
 });
 </script>
 <template>
@@ -19,14 +21,14 @@ const isActivePlayerCross = computed(() => {
       <BaseLogoButton
         mode="cross"
         :isActivePlayer="isActivePlayerCross"
-        @click="store.changeTeam()"
+        @click="gameStats.changeTeam()"
       >
         <IconCrossSmall :isActivePlayer="isActivePlayerCross" />
       </BaseLogoButton>
       <BaseLogoButton
         mode="circle"
         :isActivePlayer="isActivePlayerCircle"
-        @click="store.changeTeam()"
+        @click="gameStats.changeTeam()"
       >
         <IconCircleSmall :isActivePlayer="isActivePlayerCircle" />
       </BaseLogoButton>

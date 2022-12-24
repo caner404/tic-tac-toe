@@ -7,41 +7,47 @@ import BaseLogoButton from "@/components/BaseLogoButton.vue";
 import BaseGameStats from "@/components/BaseGameStats.vue";
 import FadeTransition from "@/components/FadeTransition.vue";
 
-import { store } from "@/store";
+import { useMainStore } from "@/stores/main";
+import { useGameStatsStore } from "@/stores/gameStats";
+import { useGameboardStore } from "@/stores/gameBoard";
 import { computed } from "@vue/reactivity";
 
+const main = useMainStore();
+const gameStats = useGameStatsStore();
+const gameBoard = useGameboardStore();
+
 const crossTitle = computed(() => {
-  if (store.isPlayerTeamCross()) {
-    return store.getEnemyType() === "CPU" ? "YOU" : "P1";
+  if (gameStats.isPlayerTeamCross()) {
+    return gameStats.getEnemyType === "CPU" ? "YOU" : "P1";
   } else {
-    return store.getEnemyType() === "CPU" ? "CPU" : "P1";
+    return gameStats.getEnemyType === "CPU" ? "CPU" : "P1";
   }
 });
 const circleTitle = computed(() => {
-  if (store.isPlayerTeamCircle()) {
-    return store.getEnemyType() === "CPU" ? "YOU" : "P2";
+  if (gameStats.isPlayerTeamCircle()) {
+    return gameStats.getEnemyType === "CPU" ? "YOU" : "P2";
   } else {
-    return store.getEnemyType() === "CPU" ? "CPU" : "P2";
+    return gameStats.getEnemyType === "CPU" ? "CPU" : "P2";
   }
 });
 const crossScore = computed(() => {
-  return store.isPlayerTeamCross()
-    ? store.getPlayerScore()
-    : store.getEnemyScore();
+  return gameStats.isPlayerTeamCross()
+    ? gameStats.getPlayerScore
+    : gameStats.getEnemyScore;
 });
 const circleScore = computed(() => {
-  return store.isPlayerTeamCircle()
-    ? store.getPlayerScore()
-    : store.getEnemyScore();
+  return gameStats.isPlayerTeamCircle()
+    ? gameStats.getPlayerScore
+    : gameStats.getEnemyScore;
 });
 const tieScore = computed(() => {
-  return store.getTieScore();
+  return gameStats.getTieScore;
 });
-const gameBoardItems = store.getGameBoardItems();
+const gameBoardItems = gameBoard.getGameBoardItems;
 const restartGame = function () {
-  store.isGameboardActive = true;
-  store.showModal = !store.showModal;
-  store.modalMode = "restart";
+  gameBoard.isGameboardActive = true;
+  main.showModal = !main.showModal;
+  main.modalMode = "restart";
 };
 </script>
 <template>

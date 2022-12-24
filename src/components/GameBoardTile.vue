@@ -4,34 +4,46 @@ import IconCrossOutline from "@/components/icons/IconCrossOutline.vue";
 import IconCircle from "@/components/icons/IconCircle.vue";
 import IconCircleOutline from "@/components/icons/IconCircleOutline.vue";
 import FadeTransition from "@/components/FadeTransition.vue";
+import { useMainStore } from "@/stores/main";
+import { useGameStatsStore } from "@/stores/gameStats";
+import { useGameboardStore } from "@/stores/gameBoard";
+import { computed } from "vue";
 
-import { store } from "@/store";
-import { ref, computed } from "vue";
-
+const main = useMainStore();
+const gameStats = useGameStatsStore();
+const gameBoard = useGameboardStore();
 const props = defineProps(["item"]);
 
 const activateCorrectMark = computed(() => {
   if (props.item.value !== "") return;
-  store.executeGameLogic(props.item);
+  main.startRound(props.item);
 });
 const disabledBtnWhileEnemyTeam = computed(() => {
   let disabled = false;
-  if (store.isEnemyCPU()) {
-    disabled = store.getCurrentTeam() !== store.getPlayerTeam();
+  if (gameStats.isEnemy("cpu")) {
+    disabled = gameStats.getCurrentTeam !== gameStats.getPlayerTeam;
   }
   return disabled;
 });
 const renderCrossOutlineHover = computed(() => {
-  if (store.isEnemyCPU()) {
-    return store.isPlayerTeamCross() && store.isGameValueEmpty(props.item);
+  if (gameStats.isEnemy("cpu")) {
+    return (
+      gameStats.isPlayerTeamCross() && gameBoard.isGameValueEmpty(props.item)
+    );
   }
-  return store.getCurrentTeam() === "X" && store.isGameValueEmpty(props.item);
+  return (
+    gameStats.isCurrentTeamCross() && gameBoard.isGameValueEmpty(props.item)
+  );
 });
 const renderCircleOutlineHover = computed(() => {
-  if (store.isEnemyCPU()) {
-    return store.isPlayerTeamCross() && store.isGameValueEmpty(props.item);
+  if (gameStats.isEnemy("cpu")) {
+    return (
+      gameStats.isPlayerTeamCircle() && gameBoard.isGameValueEmpty(props.item)
+    );
   }
-  return store.getCurrentTeam() === "O" && store.isGameValueEmpty(props.item);
+  return (
+    gameStats.isCurrentTeamCircle() && gameBoard.isGameValueEmpty(props.item)
+  );
 });
 </script>
 <template>
@@ -51,8 +63,8 @@ const renderCircleOutlineHover = computed(() => {
     />
 
     <FadeTransition>
-      <IconCross v-if="store.isGameValueCross(props.item)" />
-      <IconCircle v-else-if="store.isGameValueCircle(props.item)" />
+      <IconCross v-if="gameBoard.isGameValueCross(props.item)" />
+      <IconCircle v-else-if="gameBoard.isGameValueCircle(props.item)" />
     </FadeTransition>
   </button>
 </template>

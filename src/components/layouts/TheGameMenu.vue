@@ -3,18 +3,23 @@ import IconLogo from "@/components/icons/IconLogo.vue";
 import StartGameButton from "@/components/StartGameButton.vue";
 import MarkdDialog from "@/components/MarkDialog.vue";
 import FadeTransition from "@/components/FadeTransition.vue";
-import { store } from "@/store";
+import { useMainStore } from "@/stores/main";
+const mainStore = useMainStore();
 </script>
 <template>
   <FadeTransition>
     <div class="gameMenu" data-test="gameMenu">
       <IconLogo />
       <MarkdDialog />
-      <StartGameButton mode="cpu" enemy="cpu" @click="store.startGame('cpu')" />
+      <StartGameButton
+        mode="cpu"
+        enemy="cpu"
+        @click="mainStore.startGame('cpu')"
+      />
       <StartGameButton
         mode="player"
         enemy="player"
-        @click="store.startGame('player')"
+        @click="mainStore.startGame('player')"
       />
     </div>
   </FadeTransition>

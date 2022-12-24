@@ -2,14 +2,15 @@
 import TheGameMenu from "@/components/layouts/TheGameMenu.vue";
 import TheGameBoard from "@/components/layouts/TheGameBoard.vue";
 import BaseModal from "@/components/BaseModal.vue";
-import { store } from "./store";
+import { useMainStore } from "@/stores/main";
+const mainStore = useMainStore();
 </script>
 
 <template>
   <main>
-    <TheGameMenu v-if="!store.isGameboardActive" />
-    <TheGameBoard v-else-if="store.isGameboardActive" />
-    <BaseModal v-if="store.showModal" />
+    <TheGameMenu v-if="!mainStore.gameBoard.isGameboardActive" />
+    <TheGameBoard v-else-if="mainStore.gameBoard.isGameboardActive" />
+    <BaseModal v-if="mainStore.showModal" />
   </main>
 </template>
 

@@ -6,34 +6,38 @@ import IconCrossSmall from "@/components/icons/IconCrossSmall.vue";
 import BaseButton from "@/components/BaseModalButton.vue";
 import FadeTransition from "@/components/FadeTransition.vue";
 import { computed } from "vue";
-import { store } from "@/store";
+import { useGameStatsStore } from "@/stores/gameStats";
+import { useMainStore } from "@/stores/main";
+
+const main = useMainStore();
+const gamestats = useGameStatsStore();
 
 const header = computed(() => {
-  if (store.isATie()) return "";
-  if (store.isEnemyCPU()) {
-    return store.getPlayerWins() ? "You won!" : "Oh no , you lost...";
+  if (gamestats.isATie()) return "";
+  if (gamestats.isEnemy("cpu")) {
+    return gamestats.getPlayerWins ? "You won!" : "Oh no , you lost...";
   }
 });
 const description = computed(() => {
-  if (store.modalMode === "tie") return "Round tied";
-  return store.modalMode !== "restart" ? "takes the round" : "restart game?";
+  if (main.modalMode === "tie") return "Round tied";
+  return main.modalMode !== "restart" ? "takes the round" : "restart game?";
 });
 
 const buttonTextPrimary = computed(() => {
-  return store.modalMode !== "restart" ? "Next round" : "yes,restart";
+  return main.modalMode !== "restart" ? "Next round" : "yes,restart";
 });
 
 const buttonTextSecondary = computed(() => {
-  return store.modalMode !== "restart" ? "quit" : "no,cancel";
+  return main.modalMode !== "restart" ? "quit" : "no,cancel";
 });
 function restart() {
-  store.restart();
+  main.restart();
 }
 function nextRound() {
-  store.nextRound();
+  main.nextRound();
 }
 function cancel() {
-  store.showModal = !store.showModal;
+  main.showModal = !main.showModal;
 }
 </script>
 <template>
@@ -41,29 +45,29 @@ function cancel() {
     <div class="container">
       <div class="modal">
         <h3
-          v-if="store.modalMode !== 'restart' || store.modalMode !== 'tie'"
+          v-if="main.modalMode !== 'restart' || main.modalMode !== 'tie'"
           class="modal__header"
         >
           {{ header }}
         </h3>
         <div class="modal__winner">
-          <IconCircle v-if="store.modalMode === 'O'" class="iconActive" />
-          <IconCross v-else-if="store.modalMode === 'X'" class="iconActive" />
+          <IconCircle v-if="main.modalMode === 'O'" class="iconActive" />
+          <IconCross v-else-if="main.modalMode === 'X'" class="iconActive" />
           <IconCircleSmall
-            v-if="store.modalMode === 'O'"
+            v-if="main.modalMode === 'O'"
             class="iconActiveMobile"
             mode="modal"
           />
           <IconCrossSmall
-            v-else-if="store.modalMode === 'X'"
+            v-else-if="main.modalMode === 'X'"
             class="iconActiveMobile"
             mode="modal"
           />
           <p
             class="modal__wintext"
             :class="{
-              circleColor: store.modalMode === 'O',
-              crossColor: store.modalMode === 'X',
+              circleColor: main.modalMode === 'O',
+              crossColor: main.modalMode === 'X',
             }"
           >
             {{ description }}
@@ -73,7 +77,7 @@ function cancel() {
           <BaseButton
             mode="secondary"
             :text="buttonTextSecondary"
-            :emitEventType="store.modalMode === 'restart' ? 'cancel' : 'quit'"
+            :emitEventType="main.modalMode === 'restart' ? 'cancel' : 'quit'"
             @cancel="cancel"
             @quit="restart"
           />
@@ -81,7 +85,7 @@ function cancel() {
             mode="primary"
             :text="buttonTextPrimary"
             :emitEventType="
-              store.modalMode !== 'restart' ? 'nextRound' : 'restart'
+              main.modalMode !== 'restart' ? 'nextRound' : 'restart'
             "
             @next-round="nextRound"
             @restart="restart"
