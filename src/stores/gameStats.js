@@ -53,5 +53,15 @@ export const useGameStatsStore = defineStore("gameStats", {
     getEnemyMark() {
       return this.isPlayerTeamCircle() ? "X" : "O";
     },
+    getCurrentMark() {
+      return this.currentTeam === this.getEnemyTeam
+        ? this.getEnemyMark()
+        : this.getPlayerMark();
+    },
+    switchTeams() {
+      return this.currentTeam === this.playerTeam
+        ? this.enemyTeam
+        : this.playerTeam;
+    },
   },
 });

@@ -105,13 +105,69 @@ export const useGameboardStore = defineStore("gameBoard", {
         }
       });
     },
-    getCurrentGameBoardItem(item) {
+    getCurrentTile(item) {
       return this.gameBoardItems.find(
         (gameBoardItem) => gameBoardItem.boxNumber === item.boxNumber
       );
     },
-    getFreeGameBoardSlot() {
+    findFreeGameTile() {
       return this.gameBoardItems.find((item) => item.value == "");
+    },
+    findSpecificTile(xValue, yValue) {
+      return this.gameBoardItems.find(
+        (gameItem) => gameItem.xValue === xValue && gameItem.yValue === yValue
+      );
+    },
+    compareTile(gameTile) {
+      let samePair = 0;
+
+      samePair = this.checkTileForWin(gameTile, "horizontal");
+      if (samePair != 3) samePair = this.checkTileForWin(gameTile, "vertical");
+      if (samePair != 3) samePair = this.checkTileForWin(gameTile, "");
+      return samePair === 3 ? true : false;
+    },
+    checkTileForWin(currentTile, direction) {
+      let samePair = 0;
+      const currentXValue = currentTile.xValue;
+      const currentYValue = currentTile.yValue;
+      const currentValue = currentTile.value;
+
+      if (direction === "horizontal") {
+        for (let yValue = 0; yValue < this.yMaxValue; yValue++) {
+          if (this.compareTiles(currentValue, currentXValue, yValue))
+            samePair++;
+        }
+      } else if (direction === "vertical") {
+        for (let xValue = 0; xValue < this.xMaxValue; xValue++) {
+          if (this.compareTiles(currentValue, xValue, currentYValue))
+            samePair++;
+        }
+      } else {
+        for (
+          let xValue = 0, yValue = 0;
+          xValue <= this.xMaxValue && yValue < this.yMaxValue;
+          xValue++, yValue++
+        ) {
+          if (this.compareTiles(currentValue, xValue, yValue)) samePair++;
+        }
+
+        if (samePair != 3) {
+          samePair = 0;
+          for (
+            let xValue = 0, yValue = 2;
+            xValue <= this.xMaxValue && yValue >= this.yMinValue;
+            xValue++, yValue--
+          ) {
+            if (this.compareTiles(currentValue, xValue, yValue)) samePair++;
+          }
+        }
+      }
+      return samePair;
+    },
+    compareTiles(currentValue, xValue, yValue) {
+      let compareTile = this.findSpecificTile(xValue, yValue);
+      if (compareTile == null) return false;
+      return compareTile.value === currentValue ? true : false;
     },
   },
 });

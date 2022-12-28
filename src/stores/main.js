@@ -42,86 +42,71 @@ export const useMainStore = defineStore("main", {
       this.gameStats.currentTeam = this.gameStats.playerTeam;
       this.gameBoard.resetValues();
     },
-    startRound(item) {
-      let sameMarkStreakHorizontal = 0;
-      let sameMarkStreakVertical = 0;
-      let sameMarkDiagonal = 0;
+    playerWins() {
+      this.gameStats.playerScore = this.gameStats.playerScore + 1;
+      this.gameStats.playerWins = !this.gameStats.playerWins;
+      this.modalMode = this.gameStats.getPlayerMark();
+      this.showModal = !this.showModal;
+      return;
+    },
+    enemyWins() {
+      this.gameStats.enemyScore = this.gameStats.enemyScore + 1;
+      this.gameStats.enemyWins = !this.gameStats.enemyWins;
+      this.modalMode = this.gameStats.getEnemyMark();
+      this.showModal = !this.showModal;
+      return;
+    },
+    updateTie() {
+      this.gameStats.tieScore = this.gameStats.tieScore + 1;
+      this.showModal = !this.showModal;
+      this.modalMode = "tie";
+    },
+    checkWin(hasWon, team) {
+      if (team === "") return hasWon;
+      else {
+        return hasWon && this.gameStats.currentTeam === team;
+      }
+    },
+    checkTie() {
+      return (
+        this.gameBoard.findFreeGameTile() == null &&
+        this.gameStats.enemyWins === false &&
+        this.gameStats.playerWins === false
+      );
+    },
+    startRound(selectedTile) {
+      let hasWon = false;
       let mark = "";
 
-      if (item.value !== "") return;
-      mark =
-        this.gameStats.currentTeam === this.gameStats.getEnemyTeam
-          ? this.gameStats.getEnemyMark()
-          : this.gameStats.getPlayerMark();
-      this.gameBoard.addMarkOnGameBoard(mark, item);
-      let currentGameBoardItem = this.gameBoard.getCurrentGameBoardItem(item);
+      if (selectedTile.value !== "") return;
+      mark = this.gameStats.getCurrentMark();
+      this.gameBoard.addMarkOnGameBoard(mark, selectedTile);
+      let currentTile = this.gameBoard.getCurrentTile(selectedTile);
 
-      sameMarkStreakHorizontal =
-        this.compareGameBoardItemHorizontal(currentGameBoardItem);
-      sameMarkStreakVertical =
-        this.compareGameBoardItemVertical(currentGameBoardItem);
-      sameMarkDiagonal =
-        this.compareGameBoardItemDiagonal(currentGameBoardItem);
+      hasWon = this.gameBoard.compareTile(currentTile);
 
-      if (
-        sameMarkStreakHorizontal === 3 ||
-        sameMarkStreakVertical === 3 ||
-        (sameMarkDiagonal === 3 &&
-          this.gameStats.currentTeam === this.gameStats.getPlayerTeam)
-      ) {
-        //player wins!
-        this.gameStats.playerScore = this.gameStats.playerScore + 1;
-        this.gameStats.playerWins = !this.gameStats.playerWins;
-        this.modalMode = this.gameStats.getPlayerMark();
-        this.showModal = !this.showModal;
+      if (this.checkWin(hasWon, this.gameStats.playerTeam)) {
+        this.playerWins();
         return;
-      } else if (
-        sameMarkStreakHorizontal === 3 ||
-        sameMarkStreakVertical === 3 ||
-        (sameMarkDiagonal === 3 &&
-          this.gameStats.currentTeam === this.gameStats.getEnemyTeam)
-      ) {
-        //enemy player wins!
-        this.gameStats.enemyScore = this.gameStats.enemyScore + 1;
-        this.gameStats.enemyWins = !this.gameStats.enemyWins;
-        this.modalMode = this.gameStats.getEnemyMark();
-        this.showModal = !this.showModal;
+      } else if (this.checkWin(hasWon, this.gameStats.enemyTeam)) {
+        this.enemyWins();
         return;
       }
-      this.gameStats.currentTeam =
-        this.gameStats.currentTeam === this.gameStats.playerTeam
-          ? this.gameStats.enemyTeam
-          : this.gameStats.playerTeam;
+      this.gameStats.currentTeam = this.gameStats.switchTeams();
 
       const enemyTeamTimeout = setTimeout(() => {
         if (this.gameStats.isEnemy("cpu")) {
-          //put random mark on board for cpu
-          let randomFreeGameBoardItem = this.gameBoard.getFreeGameBoardSlot();
-          if (randomFreeGameBoardItem != null) {
+          let freeGameTile = this.gameBoard.findFreeGameTile();
+          if (freeGameTile != null) {
             this.gameBoard.addMarkOnGameBoard(
               this.gameStats.getEnemyMark(),
-              randomFreeGameBoardItem
-            );
-            sameMarkStreakHorizontal = this.compareGameBoardItemHorizontal(
-              randomFreeGameBoardItem
-            );
-            sameMarkStreakVertical = this.compareGameBoardItemVertical(
-              randomFreeGameBoardItem
-            );
-            sameMarkDiagonal = this.compareGameBoardItemDiagonal(
-              randomFreeGameBoardItem
+              freeGameTile
             );
 
-            if (
-              sameMarkStreakHorizontal === 3 ||
-              sameMarkStreakVertical === 3 ||
-              sameMarkDiagonal === 3
-            ) {
-              //cpu wins!
-              this.gameStats.enemyScore = this.gameStats.enemyScore + 1;
-              this.gameStats.enemyWins = !this.gameStats.enemyWins;
-              this.modalMode = this.gameStats.getEnemyMark();
-              this.showModal = !this.showModal;
+            hasWon = this.gameBoard.compareTile(freeGameTile);
+
+            if (this.checkWin(hasWon, "")) {
+              this.enemyWins();
               return;
             }
           }
@@ -129,93 +114,7 @@ export const useMainStore = defineStore("main", {
         }
       }, 1500);
 
-      if (
-        this.gameBoard.getFreeGameBoardSlot() == null &&
-        this.gameStats.enemyWins === false &&
-        this.gameStats.playerWins === false
-      ) {
-        //tie
-        this.gameStats.tieScore = this.gameStats.tieScore + 1;
-        this.showModal = !this.showModal;
-        this.modalMode = "tie";
-      }
-    },
-
-    compareGameBoardItemHorizontal(currentGameBoardItem) {
-      let horizontalStreak = 0;
-      const horizontalValue = currentGameBoardItem.xValue;
-      for (
-        let currentYValue = 0;
-        currentYValue < this.gameBoard.yMaxValue;
-        currentYValue++
-      ) {
-        let compareGameBoardItem = this.gameBoard.gameBoardItems.find(
-          (gameItem) =>
-            gameItem.xValue === horizontalValue &&
-            gameItem.yValue === currentYValue
-        );
-        if (compareGameBoardItem == null) {
-          continue;
-        }
-        if (compareGameBoardItem.value === currentGameBoardItem.value) {
-          horizontalStreak++;
-        }
-      }
-
-      return horizontalStreak;
-    },
-    compareGameBoardItemVertical(currentGameBoardItem) {
-      let verticalStreak = 0;
-      const verticalValue = currentGameBoardItem.yValue;
-      for (
-        let currentXValue = 0;
-        currentXValue < this.gameBoard.xMaxValue;
-        currentXValue++
-      ) {
-        let compareGameBoardItem = this.gameBoard.gameBoardItems.find(
-          (gameItem) =>
-            gameItem.xValue === currentXValue &&
-            gameItem.yValue === verticalValue
-        );
-
-        if (compareGameBoardItem == null) continue;
-        if (compareGameBoardItem.value === currentGameBoardItem.value)
-          verticalStreak++;
-      }
-      return verticalStreak;
-    },
-    compareGameBoardItemDiagonal(currentGameBoardItem) {
-      let diagonalStreak = 0;
-
-      for (
-        let x = 0, y = 0;
-        x <= this.gameBoard.xMaxValue && y < this.gameBoard.yMaxValue;
-        x++, y++
-      ) {
-        let compareGameBoardItem = this.gameBoard.gameBoardItems.find(
-          (item) => item.xValue === x && item.yValue === y
-        );
-        if (compareGameBoardItem == null) continue;
-        if (compareGameBoardItem.value === currentGameBoardItem.value)
-          diagonalStreak++;
-      }
-
-      if (diagonalStreak != 3) {
-        diagonalStreak = 0;
-        for (
-          let x = 0, y = 2;
-          x <= this.gameBoard.xMaxValue && y >= this.gameBoard.yMinValue;
-          x++, y--
-        ) {
-          let compareGameBoardItem = this.gameBoard.gameBoardItems.find(
-            (item) => item.xValue === x && item.yValue === y
-          );
-          if (compareGameBoardItem == null) continue;
-          if (compareGameBoardItem.value === currentGameBoardItem.value)
-            diagonalStreak++;
-        }
-      }
-      return diagonalStreak;
+      if (this.checkTie()) this.updateTie();
     },
   },
 });
